@@ -3,7 +3,7 @@ load("@bazel_gazelle//:def.bzl", "gazelle")
 
 prefix = "github.com/herumi/bls-eth-go-binary"
 
-# gazelle:prefix github.com/herumi/bls-go-binary
+# gazelle:prefix github.com/herumi/bls-eth-go-binary
 gazelle(
     name = "gazelle",
     prefix = prefix,
@@ -12,7 +12,7 @@ gazelle(
 go_library(
     name = "go_default_library",
     srcs = ["sample.go"],
-    importpath = "github.com/herumi/bls-go-binary",
+    importpath = "github.com/herumi/bls-eth-go-binary",
     visibility = ["//visibility:private"],
     deps = ["//bls:go_default_library"],
 )

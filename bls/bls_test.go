@@ -1,12 +1,17 @@
 package bls
 
 import (
+	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"io/ioutil"
 	"testing"
 )
 
 func testUncompressedG1(t *testing.T, gen1 *G1) {
-	buf, err := ioutil.ReadFile("tests/g1_uncompressed_valid_test_vectors.dat")
+	filePath, err := bazel.Runfile("tests/g1_uncompressed_valid_test_vectors.dat")
+	if err != nil {
+		t.Fatal(err)
+	}
+	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
@@ -23,7 +28,11 @@ func testUncompressedG1(t *testing.T, gen1 *G1) {
 }
 
 func testCompressedG1(t *testing.T, gen1 *G1) {
-	buf, err := ioutil.ReadFile("tests/g1_compressed_valid_test_vectors.dat")
+	filePath, err := bazel.Runfile("tests/g1_compressed_valid_test_vectors.dat")
+	if err != nil {
+		t.Fatal(err)
+	}
+	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
@@ -40,7 +49,11 @@ func testCompressedG1(t *testing.T, gen1 *G1) {
 }
 
 func testUncompressedG2(t *testing.T, gen2 *G2) {
-	buf, err := ioutil.ReadFile("tests/g2_uncompressed_valid_test_vectors.dat")
+	filePath, err := bazel.Runfile("tests/g2_uncompressed_valid_test_vectors.dat")
+	if err != nil {
+		t.Fatal(err)
+	}
+	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
@@ -57,7 +70,11 @@ func testUncompressedG2(t *testing.T, gen2 *G2) {
 }
 
 func testCompressedG2(t *testing.T, gen2 *G2) {
-	buf, err := ioutil.ReadFile("tests/g2_compressed_valid_test_vectors.dat")
+	filePath, err := bazel.Runfile("tests/g2_compressed_valid_test_vectors.dat")
+	if err != nil {
+		t.Fatal(err)
+	}
+	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}

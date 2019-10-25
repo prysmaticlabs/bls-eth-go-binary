@@ -68,10 +68,20 @@ go_library(
     }),
     cgo = True,
     copts = [
-        "-Ibls/include",
-        "-DBLS_SWAP_G",
-        "-DBLS_ETH ",
+        "-Ibls/include -DBLS_ETH -DBLS_SWAP_G",
+    ],
+    data = [
+      "tests/g1_uncompressed_valid_test_vectors.dat",
+      "tests/g1_compressed_valid_test_vectors.dat",
+      "tests/g2_uncompressed_valid_test_vectors.dat",
+      "tests/g2_compressed_valid_test_vectors.dat"
     ],
     importpath = "github.com/herumi/bls-eth-go-binary/bls",
     visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["bls_test.go"],
+    embed = [":go_default_library"],
 )

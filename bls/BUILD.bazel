@@ -46,6 +46,7 @@ go_library(
         "include/mcl/bn_c384_256.h",
         "include/mcl/curve_type.h",
         "mcl.go",
+        "cast.go",
     ],
     cdeps = select({
         "@io_bazel_rules_go//go/platform:android_arm": [

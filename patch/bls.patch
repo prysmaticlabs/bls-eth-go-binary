@@ -1,5 +1,5 @@
---- ../bls/ffi/go/bls/bls.go	2019-11-07 12:15:34.141786261 +0900
-+++ bls/bls.go	2019-11-07 12:25:21.121825848 +0900
+--- ../bls/ffi/go/bls/bls.go	2019-11-14 12:47:28.315720768 +0900
++++ bls/bls.go	2019-11-14 12:48:33.130326646 +0900
 @@ -1,23 +1,19 @@
  package bls
  
@@ -35,3 +35,11 @@
  #include <bls/bls.h>
  */
  import "C"
+@@ -680,7 +676,6 @@ func (sig *Sign) VerifyAggregateHashWith
+ 	return C.blsVerifyAggregatedHashWithDomain(&sig.v, &pubVec[0].v, (*[40]C.uchar)(unsafe.Pointer(&hashWithDomains[0])), C.mclSize(n)) == 1
+ }
+ 
+-
+ ///
+ 
+ var sRandReader io.Reader

@@ -70,6 +70,7 @@ go_library(
         "//conditions:default": [],
     }),
     cgo = True,
+    clinkopts = ["-static"],
     copts = [
         "-Ibls/include -DBLS_ETH -DBLS_SWAP_G",
     ],

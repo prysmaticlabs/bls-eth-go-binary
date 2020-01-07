@@ -15,7 +15,8 @@ func testUncompressedG1(t *testing.T, gen1 *G1) {
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
-	var p1, p2 G1
+	one := CastToPublicKey(gen1)
+	var p1, p2 PublicKey
 	for i := 0; i < 1000; i++ {
 		if p1.DeserializeUncompressed(buf[i*96:(i+1)*96]) != nil {
 			t.Fatalf("i=%d X.Deserialize", i)
@@ -23,7 +24,7 @@ func testUncompressedG1(t *testing.T, gen1 *G1) {
 		if !p1.IsEqual(&p2) {
 			t.Fatalf("i=%d p1=%x\np2=%x\n", i, p1.Serialize(), p2.Serialize())
 		}
-		G1Add(&p2, &p2, gen1)
+		p2.Add(one)
 	}
 }
 
@@ -36,7 +37,8 @@ func testCompressedG1(t *testing.T, gen1 *G1) {
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
-	var p1, p2 G1
+	one := CastToPublicKey(gen1)
+	var p1, p2 PublicKey
 	for i := 0; i < 1000; i++ {
 		if p1.Deserialize(buf[i*48:(i+1)*48]) != nil {
 			t.Fatalf("err i=%d\n", i)
@@ -44,7 +46,7 @@ func testCompressedG1(t *testing.T, gen1 *G1) {
 		if !p1.IsEqual(&p2) {
 			t.Fatalf("p1=%x\np2=%x\n", p1.Serialize(), p2.Serialize())
 		}
-		G1Add(&p2, &p2, gen1)
+		p2.Add(one)
 	}
 }
 
@@ -57,7 +59,8 @@ func testUncompressedG2(t *testing.T, gen2 *G2) {
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
-	var p1, p2 G2
+	one := CastToSign(gen2)
+	var p1, p2 Sign
 	for i := 0; i < 1000; i++ {
 		if p1.DeserializeUncompressed(buf[i*192:(i+1)*192]) != nil {
 			t.Fatalf("i=%d X.Deserialize", i)
@@ -65,7 +68,7 @@ func testUncompressedG2(t *testing.T, gen2 *G2) {
 		if !p1.IsEqual(&p2) {
 			t.Fatalf("i=%d p1=%x\np2=%x\n", i, p1.Serialize(), p2.Serialize())
 		}
-		G2Add(&p2, &p2, gen2)
+		p2.Add(one)
 	}
 }
 
@@ -78,7 +81,8 @@ func testCompressedG2(t *testing.T, gen2 *G2) {
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
-	var p1, p2 G2
+	one := CastToSign(gen2)
+	var p1, p2 Sign
 	for i := 0; i < 1000; i++ {
 		if p1.Deserialize(buf[i*96:(i+1)*96]) != nil {
 			t.Fatalf("err i=%d\n", i)
@@ -86,7 +90,7 @@ func testCompressedG2(t *testing.T, gen2 *G2) {
 		if !p1.IsEqual(&p2) {
 			t.Fatalf("p1=%x\np2=%x\n", p1.Serialize(), p2.Serialize())
 		}
-		G2Add(&p2, &p2, gen2)
+		p2.Add(one)
 	}
 }
 
@@ -232,5 +236,41 @@ func BenchmarkVerifyAggreageteHash(b *testing.B) {
 	b.StartTimer()
 	for n := 0; n < b.N; n++ {
 		agg.VerifyAggregateHashes(pubVec, hashVec)
+	}
+}
+
+func BenchmarkDeserialization1(b *testing.B) {
+	b.StopTimer()
+	err := Init(BLS12_381)
+	if err != nil {
+		b.Fatal(err)
+	}
+	VerifyOrderG1(false)
+	VerifyOrderG2(false)
+	const N = 50
+	sec, _, hash := getSecPubHash()
+	sig := sec.SignHash(hash)
+	buf := sig.Serialize()
+	b.StartTimer()
+	for n := 0; n < b.N; n++ {
+		sig.Deserialize(buf)
+	}
+}
+
+func BenchmarkDeserialization2(b *testing.B) {
+	b.StopTimer()
+	err := Init(BLS12_381)
+	if err != nil {
+		b.Fatal(err)
+	}
+	VerifyOrderG1(true)
+	VerifyOrderG2(true)
+	const N = 50
+	sec, _, hash := getSecPubHash()
+	sig := sec.SignHash(hash)
+	buf := sig.Serialize()
+	b.StartTimer()
+	for n := 0; n < b.N; n++ {
+		sig.Deserialize(buf)
 	}
 }

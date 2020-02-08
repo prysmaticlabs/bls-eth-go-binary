@@ -78,6 +78,8 @@ go_library(
         "tests/g1_uncompressed_valid_test_vectors.dat",
         "tests/g2_compressed_valid_test_vectors.dat",
         "tests/g2_uncompressed_valid_test_vectors.dat",
+        "tests/sign.txt",
+        "tests/fast_aggregate_verify.txt",
     ],
     importpath = "github.com/herumi/bls-eth-go-binary/bls",
     visibility = ["//visibility:public"],

@@ -13,8 +13,8 @@ package bls
 #cgo windows,amd64 LDFLAGS:-L${SRCDIR}/lib/windows/amd64
 typedef unsigned int (*ReadRandFunc)(void *, void *, unsigned int);
 int wrapReadRandCgo(void *self, void *buf, unsigned int n);
-#include <mcl/bn_c384_256.h>
-#include <bls/bls.h>
+#include <include/mcl/bn_c384_256.h>
+#include <include/bls/bls.h>
 */
 import "C"
 import (
@@ -750,8 +750,11 @@ func (sig *Sign) VerifyAggregateHashWithDomain(pubVec []PublicKey, hashWithDomai
 
 // SetETHmode --
 // 0 ; old version, 1 ; latest(eth2.0-spec phase0)
-func SetETHmode(mode int) {
-	C.blsSetETHmode(C.int(mode))
+func SetETHmode(mode int) error {
+	if err := C.blsSetETHmode(C.int(mode)); err != 0 {
+		return fmt.Errorf("got non-zero response code: %d", err)
+	}
+	return nil
 }
 
 // SignatureVerifyOrder --

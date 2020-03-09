@@ -1,0 +1,93 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+cc_library(
+    name = "archive_linux_amd64",
+    srcs = [
+        "lib/linux/amd64/libbls384_256.a",
+    ],
+)
+
+cc_library(
+    name = "archive_darwin_amd64",
+    srcs = [
+        "lib/darwin/amd64/libbls384_256.a",
+    ],
+)
+
+cc_library(
+    name = "archive_android_arm64",
+    srcs = [
+        "lib/android/arm64-v8a/libbls384_256.a",
+    ],
+)
+
+cc_library(
+    name = "archive_android_arm",
+    srcs = [
+        "lib/android/armeabi-v7a/libbls384_256.a",
+    ],
+)
+
+cc_library(
+    name = "archive_windows_amd64",
+    srcs = [
+        "lib/windows/amd64/libbls384_256.a",
+    ],
+)
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "bls.go",
+        "callback.go",
+        "cast.go",
+        "include/bls/bls.h",
+        "include/bls/bls384_256.h",
+        "include/mcl/bn.h",
+        "include/mcl/bn_c384_256.h",
+        "include/mcl/curve_type.h",
+        "mcl.go",
+    ],
+    cdeps = select({
+        "@io_bazel_rules_go//go/platform:android_arm": [
+            ":archive_android_arm",
+        ],
+        "@io_bazel_rules_go//go/platform:linux_arm64": [
+            ":archive_android_arm64",
+        ],
+        "@io_bazel_rules_go//go/platform:android_arm64": [
+            ":archive_android_arm64",
+        ],
+        "@io_bazel_rules_go//go/platform:darwin_amd64": [
+            ":archive_darwin_amd64",
+        ],
+        "@io_bazel_rules_go//go/platform:linux_amd64": [
+            ":archive_linux_amd64",
+        ],
+        "@io_bazel_rules_go//go/platform:windows_amd64": [
+            ":archive_windows_amd64",
+        ],
+        "//conditions:default": [],
+    }),
+    cgo = True,
+    copts = [
+        "-Ibls/include -DBLS_ETH -DBLS_SWAP_G",
+    ],
+    data = [
+        "tests/g1_compressed_valid_test_vectors.dat",
+        "tests/g1_uncompressed_valid_test_vectors.dat",
+        "tests/g2_compressed_valid_test_vectors.dat",
+        "tests/g2_uncompressed_valid_test_vectors.dat",
+        "tests/sign.txt",
+        "tests/fast_aggregate_verify.txt",
+    ],
+    importpath = "github.com/herumi/bls-eth-go-binary/bls",
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["bls_test.go"],
+    embed = [":go_default_library"],
+    deps = ["@io_bazel_rules_go//go/tools/bazel:go_default_library"],
+)

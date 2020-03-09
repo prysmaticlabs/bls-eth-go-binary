@@ -3,6 +3,7 @@ package bls
 import (
 	"encoding/csv"
 	"encoding/hex"
+	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"io"
 	"io/ioutil"
 	"os"
@@ -10,7 +11,11 @@ import (
 )
 
 func testUncompressedG1(t *testing.T, gen1 *G1) {
-	buf, err := ioutil.ReadFile("tests/g1_uncompressed_valid_test_vectors.dat")
+	filePath, err := bazel.Runfile("tests/g1_uncompressed_valid_test_vectors.dat")
+	if err != nil {
+		t.Fatal(err)
+	}
+	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
@@ -28,7 +33,11 @@ func testUncompressedG1(t *testing.T, gen1 *G1) {
 }
 
 func testCompressedG1(t *testing.T, gen1 *G1) {
-	buf, err := ioutil.ReadFile("tests/g1_compressed_valid_test_vectors.dat")
+	filePath, err := bazel.Runfile("tests/g1_compressed_valid_test_vectors.dat")
+	if err != nil {
+		t.Fatal(err)
+	}
+	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
@@ -46,7 +55,11 @@ func testCompressedG1(t *testing.T, gen1 *G1) {
 }
 
 func testUncompressedG2(t *testing.T, gen2 *G2) {
-	buf, err := ioutil.ReadFile("tests/g2_uncompressed_valid_test_vectors.dat")
+	filePath, err := bazel.Runfile("tests/g2_uncompressed_valid_test_vectors.dat")
+	if err != nil {
+		t.Fatal(err)
+	}
+	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
@@ -64,7 +77,11 @@ func testUncompressedG2(t *testing.T, gen2 *G2) {
 }
 
 func testCompressedG2(t *testing.T, gen2 *G2) {
-	buf, err := ioutil.ReadFile("tests/g2_compressed_valid_test_vectors.dat")
+	filePath, err := bazel.Runfile("tests/g2_compressed_valid_test_vectors.dat")
+	if err != nil {
+		t.Fatal(err)
+	}
+	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		t.Fatalf("ReadFile")
 	}
@@ -177,10 +194,13 @@ func ethSignTest(t *testing.T) {
 	sigHex := "b2deb7c656c86cb18c43dae94b21b107595486438e0b906f3bdb29fa316d0fc3cab1fc04c6ec9879c773849f2564d39317bfa948b4a35fc8509beafd3a2575c25c077ba8bca4df06cb547fe7ca3b107d49794b7132ef3b5493a6ffb2aad2a441"
 
 	ethSignOneTest(t, secHex, msgHex, sigHex)
-	fileName := "tests/sign.txt"
-	fp, err := os.Open(fileName)
+	filePath, err := bazel.Runfile("tests/sign.txt")
 	if err != nil {
-		t.Fatalf("can't open %v %v", fileName, err)
+		t.Fatal(err)
+	}
+	fp, err := os.Open(filePath)
+	if err != nil {
+		t.Fatalf("can't open %v %v", filePath, err)
 	}
 	defer fp.Close()
 	reader := csv.NewReader(fp)
@@ -254,10 +274,13 @@ func ethAggregateVerifyNoCheckTest(t *testing.T) {
 }
 
 func ethFastAggregateVerifyTest(t *testing.T) {
-	fileName := "tests/fast_aggregate_verify.txt"
-	fp, err := os.Open(fileName)
+	filePath, err := bazel.Runfile("tests/fast_aggregate_verify.txt")
 	if err != nil {
-		t.Fatalf("can't open %v %v", fileName, err)
+		t.Fatal(err)
+	}
+	fp, err := os.Open(filePath)
+	if err != nil {
+		t.Fatalf("can't open %v %v", filePath, err)
 	}
 	defer fp.Close()
 
